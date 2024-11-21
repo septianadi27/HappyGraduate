@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graduation Pinaa</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/TextPlugin.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: "Dancing Script", cursive;
+            font-optical-sizing: auto;
+            font-weight: 500;
+            font-style: normal;
+            /* font-family: 'Arial', sans-serif; */
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .card {
+            width: 350px;
+            height: 500px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            overflow: hidden;
+            position: relative;
+        }
+        .background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.2;
+            z-index: 1;
+        }
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 2;
+        }
+        .slide.active {
+            opacity: 1;
+        }
+        .slide h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            background-color: rgba(255,255,255,0.8);
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .slide p {
+            color: #34495e;
+            line-height: 1.6;
+            /* background-color: rgba(255,255,255,0.8); */
+            padding: 10px;
+            border-radius: 10px;
+        }
+        #tapToNext {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 10px;
+            opacity: 0.7;
+            z-index: 3;
+            transition: opacity 0.3s;
+        }
+        #replayButton {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #ff80df;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            z-index: 3;
+            display: none;
+        }
+        #balloon-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .balloon {
+            position: absolute;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <div id="balloon-container"></div>
+    <div class="card" id="greetingCard">
+        <div class="background" id="cardBackground"></div>
+        <div class="slide" id="slide1">
+            <h1 id="title1"></h1>
+            <p id="text1"></p>
+        </div>
+        <div class="slide" id="slide2">
+            <h1 id="title2"></h1>
+            <p id="text2"></p>
+        </div>
+        <div class="slide" id="slide3">
+            <h1 id="title3"></h1>
+            <p id="text3"></p>
+        </div>
+        <div class="slide" id="slide4">
+            <h1 id="title4"></h1>
+            <p id="text4"></p>
+        </div>
+        <div class="slide" id="slide5">
+            <h1 id="title5"></h1>
+            <p id="text5"></p>
+        </div>
+        <div class="slide" id="slide6">
+            <h1 id="title6"></h1>
+            <p id="text6"></p>
+        </div>
+        <div class="slide" id="slide7">
+            <h1 id="title7"></h1>
+            <p id="text7"></p>
+        </div>
+        <div class="slide" id="slide8">
+            <h1 id="title8"></h1>
+            <p id="text8"></p>
+        </div>
+        <div id="tapToNext">Tap to Next</div>
+        <button id="replayButton">Putar Lagi</button>
+    </div>
+
+    <script>
+        // Master Configuration (Editable)
+        const config = {
+            nama: "Pinaa",
+            namaPengucap: "Yay",
+            backgroundUrl: "https://cdn.pixabay.com/photo/2024/06/08/20/35/border-8817524_1280.jpg", 
+            slides: [
+                {
+                    title: "Happy Graduation!",
+                    text: "Hari ini adalah momen spesial yang telah kau nanti-nantikan.<br><br><strong>Fina Nur Kholisah, S.M.</strong>"
+                },
+                {
+                    title: "Perjalanan Panjang",
+                    text: "Well done! You made it! Congrats!<br>The road to graduation is a long, steep climb, so <br><strong>take a moment at the top to pat yourself on the back for all your hard work</strong>.<br><br>Setiap tantangan yang kau hadapi adalah bagian dari kesuksesan yang kau raih hari ini."
+                },
+                {
+                    title: "Masa Depan Menanti",
+                    text: "Selamat atas keberhasilanmu! Semoga mimpimu selalu membimbingmu ke depan."
+                },
+                {
+                    title: "I'm Done",
+                    text: "We've known each other for quite some time now, and I really enjoy our time together. I'll always do whatever I can for you, because <strong>I like and respect you a lot</strong>. ❤️ "
+                },
+                {
+                    title: "But..",
+                    text: "I'm exhausted, my efforts are fruitless, and I'm starting to wonder <strong>why I keep pushing on</strong>. If this keeps up, how long will it last? <strong>I still have pride</strong>."
+                },
+                {
+                    title: "But..",
+                    text: "I haven't seen much feedback from you regarding my efforts. I'm not asking for anything huge, but <strong>you'll just call me when you only need me</strong>, or something <strong>like an update me when you get home</strong> — that hasn't been happening, <strong>You're so wrapped up in your own world that you forget about the people around you</strong>."
+                },
+                {
+                    title: "<strong>I liked you</strong>, but it ended badly",
+                    text: "I just want to be honest with you and tell you that I won't be able to take care of you in the future, so <strong>please look out for yourself and take care of yourself, OK?</strong>"
+                },
+                {
+                    title: "Lastly",
+                    text: "Warm regards, Yay.<br><br>beri tau aku kalau kamu menyukainya 😊 <br> atau klik dibawah untuk mengulang."
+                }
+            ]
+        };
+
+        // Initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            const card = document.getElementById('greetingCard');
+            const background = document.getElementById('cardBackground');
+            const slides = document.querySelectorAll('.slide');
+            const tapToNext = document.getElementById('tapToNext');
+            const replayButton = document.getElementById('replayButton');
+            let currentSlide = 0;
+            let isAnimating = false;
+
+            // Set background image
+            if (config.backgroundUrl) {
+                background.style.backgroundImage = `url('${config.backgroundUrl}')`;
+            }
+
+            // Populate slides with config data
+            config.slides.forEach((slide, index) => {
+                const titleEl = document.getElementById(`title${index + 1}`);
+                const textEl = document.getElementById(`text${index + 1}`);
+                
+                // Initial setup
+                titleEl.textContent = slide.title;
+                textEl.textContent = slide.text;
+            });
+
+            // Function to animate slide
+            function animateSlide(slideIndex) {
+                // Prevent multiple animations
+                if (isAnimating) return;
+                isAnimating = true;
+
+                // Reset opacity
+                gsap.set(`#title${slideIndex + 1}, #text${slideIndex + 1}`, { opacity: 0, text: "" });
+
+                // Animate title
+                const titleTimeline = gsap.timeline({
+                    onComplete: () => {
+                        // Animate text after title
+                        gsap.to(`#text${slideIndex + 1}`, {
+                            opacity: 1,
+                            text: config.slides[slideIndex].text,
+                            duration: 1,
+                            ease: "none",
+                            onComplete: () => {
+                                isAnimating = false;
+                            }
+                        });
+                    }
+                });
+
+                titleTimeline.to(`#title${slideIndex + 1}`, {
+                    opacity: 1,
+                    text: config.slides[slideIndex].title,
+                    duration: 1,
+                    ease: "none"
+                });
+            }
+
+            // First slide animation
+            slides[0].classList.add('active');
+            animateSlide(0);
+
+            // Click to change slides
+            card.addEventListener('click', () => {
+                // Prevent tap if animating or on last slide
+                if (isAnimating || currentSlide >= slides.length - 1) return;
+
+                // Hide current slide
+                gsap.to(`#title${currentSlide + 1}, #text${currentSlide + 1}`, {
+                    opacity: 0,
+                    duration: 0.5
+                });
+
+                // Move to next slide
+                currentSlide++;
+                
+                // Reset slide positions and active states
+                slides.forEach((slide, index) => {
+                    slide.classList.toggle('active', index === currentSlide);
+                });
+
+                // Hide tap to next on last slide
+                if (currentSlide === slides.length - 1) {
+                    tapToNext.style.display = 'none';
+                    replayButton.style.display = 'block';
+                }
+
+                // Animate new slide
+                animateSlide(currentSlide);
+            });
+
+            // Replay functionality
+            replayButton.addEventListener('click', () => {
+                // Prevent replay if currently animating
+                if (isAnimating) return;
+
+                // Reset all slides
+                slides.forEach((slide, index) => {
+                    slide.classList.toggle('active', index === 0);
+                    
+                    // Reset text and opacity
+                    const titleEl = slide.querySelector('h1');
+                    const textEl = slide.querySelector('p');
+                    titleEl.textContent = config.slides[index].title;
+                    textEl.textContent = config.slides[index].text;
+                    gsap.set(titleEl, { opacity: 0, text: "" });
+                    gsap.set(textEl, { opacity: 0, text: "" });
+                });
+
+                // Reset slide index
+                currentSlide = 0;
+
+                // Show tap to next, hide replay button
+                tapToNext.style.display = 'block';
+                replayButton.style.display = 'none';
+
+                // Animate first slide
+                animateSlide(0);
+            });
+        });
+    </script>
+
+    <script>
+        // Array warna balon yang diinginkan
+        const balloonColors = ['#A64D79', '#CB9DF0', '#F0C1E1', '#FDDBBB', '#FFF9BF', '#F05A7E', '#F4538A', '#59D5E0', '#F5DD61', '#FAA300', '#392467', '#5D3587', '#A367B1', '#FFD1E3'];
+
+        // Fungsi untuk membuat balon
+        function createBalloon() {
+            const container = document.getElementById('balloon-container');
+            const balloon = document.createElement('div');
+
+            const size = 30 + Math.random() * 100; // Ukuran balon
+            const x = Math.random() * window.innerWidth; // Posisi horizontal
+            const colorIndex = Math.floor(Math.random() * balloonColors.length); // Indeks warna acak dari array
+            const color = balloonColors[colorIndex]; // Ambil warna dari array
+
+            balloon.classList.add('balloon');
+            balloon.style.width = `${size}px`;
+            balloon.style.height = `${size}px`;
+            balloon.style.backgroundColor = color; // Terapkan warna balon
+            balloon.style.left = `${x}px`;
+            balloon.style.bottom = '0px';
+
+            container.appendChild(balloon);
+
+            // Animasi balon
+            gsap.to(balloon, {
+                y: -window.innerHeight,
+                x: x + (Math.random() - 0.5) * 200,
+                opacity: [0, 1, 0],
+                scale: [0.5, 1, 0.5],
+                duration: 5 + Math.random() * 3,
+                ease: "power1.inOut",
+                onComplete: () => {
+                    container.removeChild(balloon); // Hapus balon setelah selesai
+                }
+            });
+        }
+
+        // Fungsi untuk memulai animasi balon
+        function startBalloonAnimation() {
+            for (let i = 0; i < 20; i++) {
+                setTimeout(createBalloon, Math.random() * 2000);
+            }
+            setInterval(() => {
+                for (let i = 0; i < 10; i++) {
+                    setTimeout(createBalloon, Math.random() * 2000);
+                }
+            }, 2000);
+        }
+
+        // Mulai animasi balon
+        window.onload = startBalloonAnimation;
+    </script>
+
+</body>
+</html>
